@@ -1,7 +1,7 @@
 {
   "name": "@async-generators/terminator",
   "description": "inform an iterator when it is prematurely terminated by the consumer.",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "author": {
     "name": "Meirion Hughes",
     "email": "crakinshot@yahoo.com",
