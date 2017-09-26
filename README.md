@@ -13,7 +13,6 @@ _package requires a system that supports async-iteration, either natively or via
 
 ### Install
 ```
-npm install @async-generators/terminator --save
 yarn add @async-generators/terminator
 ```
 
@@ -25,7 +24,7 @@ Additionally, the `module` entry points to a `es2015` distribution, which can be
 
 ### terminator(source)
 
-<code>terminator()</code> returns an iterable that, when iterated, wraps the source iterable, captures calls to `return` and calls `next(Symbol.for("terminated"))`. The `source` iterable can then find out if it was terminated by examining the return value of `yield`. i.e. `if((yield item) == Symbol.for("terminated")) ...` 
+<code>terminator()</code> returns an iterable that, when iterated, wraps the source iterable and captures calls to `return`. When a compliant consumer (`for`, `for-await`) terminates iteration, then the `return` call is rerouted to call `next(Symbol.for("terminated"))`. The original `source` iterable can then find out if it was terminated by examining the return value of `yield` to see if it equals `Symbol.for("terminated")`;
 
 source must have a `[Symbol.asyncIterator]` or `[Symbol.iterator]` property. If both are present only `[Symbol.asyncIterator]` is used. 
 
@@ -33,7 +32,28 @@ source must have a `[Symbol.asyncIterator]` or `[Symbol.iterator]` property. If 
 
 example.js
 ```js
+const terminator = require("@async-generators/terminator").default;
 
+async function* source() {
+  for (let i = 0; i < 10; i++) {
+    let terminated = (yield i) == Symbol.for("terminated");
+    if (terminated) {
+      console.log("clean-up on aisle five!");
+      return;
+    }
+  }
+}
+
+async function main(){
+  for await (let item of terminator(source())){
+    if(item > 4){
+      break;
+    }
+    console.log(item);
+  }
+}
+
+main().catch(console.log);
 ```
 
 Execute with the latest node.js: 
@@ -44,6 +64,12 @@ node --harmony-async-iteration example.js
 
 output:
 ```
+0
+1
+2
+3
+4
+clean-up on aisle five!
 ```
 ## Typescript
 
