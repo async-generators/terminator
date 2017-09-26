@@ -128,4 +128,32 @@ describe("@async-generator/terminator", () => {
 
     expect(result).to.be.true;
   })
+
+  it("should cascade return", async () => {
+    class Foo {
+      jam = "tart";
+      *[Symbol.iterator]() {
+        if ((yield "hello") == Symbol.for("terminated")) {
+          this.jam = "sandwich";
+        }
+        yield "world";
+      }
+    }
+
+    function* chain(source) {
+      for (let item of source)
+        if ((yield item) == Symbol.for("terminated")) {
+          break;
+        }
+    }
+
+    let foo = new Foo();
+
+    expect(foo.jam).to.be.eq("tart");
+
+    for await (let item of chain(terminator(chain(terminator(foo))))) {
+      break;
+    }
+    expect(foo.jam).to.be.eq("sandwich");
+  })
 })

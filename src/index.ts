@@ -8,9 +8,11 @@ export default function <T>(
     return {
       [Symbol.asyncIterator]() {
         const it = source[Symbol.asyncIterator]();
+        const $return = it.return;
         it.return = function (value) {
-          return it.next(Symbol.for("terminated"));
-        }
+          it.next(Symbol.for("terminated"));
+          return $return.call(it)
+        };
         return it;
       }
     }
@@ -18,9 +20,11 @@ export default function <T>(
     return {
       [Symbol.iterator]() {
         const it = source[Symbol.iterator]();
+        const $return = it.return;
         it.return = function (value) {
-          return it.next(Symbol.for("terminated"));
-        }
+          it.next(Symbol.for("terminated"));
+          return $return.call(it);
+        };
         return it;
       }
     }
