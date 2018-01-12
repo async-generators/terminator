@@ -1,3 +1,5 @@
+(<any>Symbol)["asyncIterator"] = Symbol["asyncIterator"] || Symbol.for("asyncIterator");
+
 export default function <T>(source: Iterable<T>): Iterable<T>;
 export default function <T>(source: AsyncIterable<T>): AsyncIterable<T>;
 export default function <T>(

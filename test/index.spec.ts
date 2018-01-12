@@ -1,5 +1,5 @@
-import equal from '@async-generators/equal';
 import terminator from '../src';
+import equal from '@async-generators/equal';
 import { expect } from 'chai';
 
 describe("@async-generator/terminator", () => {
